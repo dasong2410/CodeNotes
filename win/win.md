@@ -42,3 +42,7 @@ uptime included
 
 	wmic computersystem get domain
 	systeminfo | findstr /B /C:"Domain"
+
+### 10. zip
+
+	Compress-Archive -Path apps -DestinationPath apps.zip
