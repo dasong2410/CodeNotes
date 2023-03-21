@@ -1,0 +1,36 @@
+192.168.31.188 master
+192.168.31.191 worker01
+192.168.31.155 worker02
+
+ssh dasong@192.168.31.188
+ssh dasong@192.168.31.191
+ssh dasong@192.168.31.155
+
+
+
+kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.31.188
+
+
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.31.188:6443 --token 3dgyob.nkv0yrx734insr21 \
+	--discovery-token-ca-cert-hash sha256:89bc276d1285340b233c8e9792b6276bc004e3708f8cb833dcaac1893572f56a
