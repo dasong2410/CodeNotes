@@ -3,7 +3,9 @@
 ### 1. Create base backup, back up pg_wal dir manually if need
 
     # pg_basebackup -h localhost -p 80 -U postgres -D D:\Apps\DBBackup -Ft -z -Xs -P
-    pg_basebackup -F t -D ~/backup
+    # pg_basebackup -F t -D ~/backup
+    # exec on standby server
+    pg_basebackup -R -h 192.168.56.61 -U repl -D /var/lib/postgresql/15/main
 
 ### 2. setting paramter
 
@@ -26,11 +28,6 @@
 ### 4. start db cluster
 
     /usr/pgsql-15/bin/postgres "-D" "/var/lib/pgsql/15/data/"
-
-
-
-cp ~/backup/pg_wal/00* ~/15/data/pg_wal/
-
 
 ### Other
 
