@@ -18,31 +18,31 @@ SCRIPT
 
 # This defines the version of vagrant
 Vagrant.configure(2) do |config|
-	# Specifying the box we wish to use
-  	config.vm.box = "bento/ubuntu-22.04"
-	# Adding Bridged Network Adapter
-	# config.vm.network "public_network"
-	config.vm.network "private_network", :type => 'dhcp'
-	
-	# Iterating the loop for three times
-	(1..2).each do |i|
-		# Defining VM properties
-		config.vm.define "node-#{i}" do |node|
-			node.vm.hostname = "node-#{i}"
-			# node.vm.network "private_network", :type => 'dhcp'
-			# Specifying the provider as VMWare and naming the VM's
-			config.vm.provider "virtualbox" do |v|
-				# The VM will be named as node-{i}
-				# if setup this parameter will raise error,
-				# because only the lastest nodename will be used, even when creating the first node, maybe it's a bug
-				# v.name = "node-#{i}"
-				# v.gui = true
-				v.linked_clone = true
-				v.check_guest_additions = false
-			end
+  # Specifying the box we wish to use
+    config.vm.box = "bento/ubuntu-22.04"
+  # Adding Bridged Network Adapter
+  # config.vm.network "public_network"
+  config.vm.network "private_network", :type => 'dhcp'
+  
+  # Iterating the loop for three times
+  (1..2).each do |i|
+    # Defining VM properties
+    config.vm.define "node-#{i}" do |node|
+      node.vm.hostname = "node-#{i}"
+      # node.vm.network "private_network", :type => 'dhcp'
+      # Specifying the provider as VMWare and naming the VM's
+      config.vm.provider "virtualbox" do |v|
+        # The VM will be named as node-{i}
+        # if setup this parameter will raise error,
+        # because only the lastest nodename will be used, even when creating the first node, maybe it's a bug
+        # v.name = "node-#{i}"
+        # v.gui = true
+        v.linked_clone = true
+        v.check_guest_additions = false
+      end
 
-			# node.vm.provision "shell", inline: $script
-			node.vm.provision "shell", inline: $pg
-		end
-	end
+      # node.vm.provision "shell", inline: $script
+      node.vm.provision "shell", inline: $pg
+    end
+  end
 end
