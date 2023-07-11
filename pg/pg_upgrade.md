@@ -3,7 +3,7 @@
 ## Test script
 
 ```sql
-create database test;
+create database test with encoding = 'SQL_ASCII' template = template0;
 \c test
 
 create table t_test(c1 int, c2 int);
@@ -21,6 +21,7 @@ begin
     return 'Welcome to new PostgreSQL Version';
 end;
 $$ language plpgsql;
+
 ```
 
 ## Install PostgreSQL via binary
@@ -60,18 +61,18 @@ dpkg --get-selections | grep postgres
 apt list --installed | grep postgres
 ```
 
-## Upgrade via pg_upgrade(9.3 to 14)
+## Upgrade via pg_upgrade(9.1 to 14)
 
-### 1. Install 9.3 and 14
+### 1. Install 9.1 and 14
 
 See installation via binary
 
-### 2. Run test script to stock database on 9.3
+### 2. Run test script to stock database on 9.1
 
 ### 3. Related directories
 
-    /opt/PostgreSQL/9.3/data
-    /opt/PostgreSQL/9.3/bin
+    /opt/PostgreSQL/9.1/data
+    /opt/PostgreSQL/9.1/bin
 
     /etc/postgresql/14/main
     /usr/lib/postgresql/14/bin
@@ -83,9 +84,13 @@ See installation via binary
 - https://www.postgresql.org/docs/14/pgupgrade.html
 
 ```bash
-/usr/lib/postgresql/14/bin/pg_upgrade -b /opt/PostgreSQL/9.3/bin -B /usr/lib/postgresql/14/bin -d /opt/PostgreSQL/9.3/data -D /etc/postgresql/14/main --check
+# create a cluster
+sudo pg_createcluster 14 main -d /var/lib/postgresql/clusters/14/main --locale=en_US.UTF-8 --start-conf=manual
 
-/usr/lib/postgresql/14/bin/pg_upgrade -b /opt/PostgreSQL/9.3/bin -B /usr/lib/postgresql/14/bin -d /opt/PostgreSQL/9.3/data -D /etc/postgresql/14/main
+/usr/lib/postgresql/14/bin/pg_upgrade -b /opt/PostgreSQL/9.1/bin -B /usr/lib/postgresql/14/bin -d /opt/PostgreSQL/9.1/data -D /etc/postgresql/14/main --check
+
+/usr/lib/postgresql/14/bin/pg_upgrade -b /opt/PostgreSQL/9.1/bin -B /usr/lib/postgresql/14/bin -d /opt/PostgreSQL/9.1/data -D /etc/postgresql/14/main
+
 ```
 
 ## upgrade via pg_upgradecluster(9.1 to 14)
@@ -113,8 +118,12 @@ See installaction via apt-get above.
 - https://gorails.com/guides/upgrading-postgresql-version-on-ubuntu-server
 
 ```bash
+sudo systemctl stop postgresql
+
 sudo pg_renamecluster 14 main main_old
 sudo pg_upgradecluster 9.1 main
+
+sudo pg_upgradecluster -v 14 --rename main -m upgrade 9.1 main /var/lib/postgresql/clusters/14/main
 pg_lsclusters
 ```
 
@@ -127,14 +136,6 @@ psql -p 5432
 select * from t_test;
 select func_test();
 ```
-
-
-
-
-
-
-
-
 
 
 ## After upgrade
