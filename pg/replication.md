@@ -13,38 +13,61 @@
 
 - create slot
     ```sql
-    SELECT * FROM pg_create_physical_replication_slot('node_a_slot');
+    SELECT * FROM pg_create_physical_replication_slot('slot_node2');
 
     SELECT slot_name, slot_type, active FROM pg_replication_slots;
     ```
 - pg_ha.conf
     ```bash
-    host    replication     repl             0.0.0.0/0                 scram-sha-256
+    host    replication     repl             192.168.56.87/32                 trust
     ```
 
-- backup
+- backup (on secondary server)
+    ```bash
+    pg_basebackup -R -h 192.168.56.61 -U repl -D /var/lib/postgresql/14/main
+    ```
 
 ## 2. Restore
 
 - restore
 
-- create signal file
+- create signal file(pg_basebackup -R will create it automatically)
     ```bash
     touch standby.signal
     ```
 
 - postgresql.conf
     ```bash
-    primary_conninfo = 'host=172.16.92.128 port=5432 user=postgres password=postgres options=''-c wal_sender_timeout=5000'''
-    primary_slot_name = 'slot_node_1'
+    # primary_conninfo = 'host=172.16.92.128 port=5432 user=postgres password=postgres options=''-c wal_sender_timeout=5000'''
+    primary_slot_name = 'slot_node1'
     hot_standby = on
+    ```
+
+- postgresql.auto.conf
+    ```bash
+    primary_conninfo = 'user=repl passfile=''/var/lib/postgresql/.pgpass'' channel_binding=prefer host=192.168.56.87 port=5432 sslmode=prefer sslcompression=0 sslsni=1 ssl_min_protocol_version=TLSv1.2 gssencmode=prefer krbsrvname=postgres target_session_attrs=any'
+    ```
+
+    ```bash
+    alter system set primary_conninfo = 'user=repl passfile=''/var/lib/postgresql/.pgpass'' channel_binding=prefer host=192.168.56.87 port=5432 sslmode=prefer sslcompression=0 sslsni=1 ssl_min_protocol_version=TLSv1.2 gssencmode=prefer krbsrvname=postgres target_session_attrs=any';
     ```
 
 ## 3. Start standby cluster
     
 ```bash
 /usr/pgsql-15/bin/postgres "-D" "/var/lib/pgsql/15/standby01/"
+
+# on Ubuntu
+sudo pg_ctlcluster 15 main start
 ```
+
+## 4. pg_promote
+
+```bash
+# on Ubuntu
+sudo pg_ctlcluster 15 main promote
+```
+
 
 ## A1. Related views/functions
 
@@ -52,6 +75,9 @@
 ```sql
 # the current WAL write location on the primary
 select pg_current_wal_lsn();
+
+# wal file
+select pg_walfile_name('0/C0005B0');
 
 # a list of WAL sender processes
 select * from pg_stat_replication;
