@@ -99,6 +99,8 @@ sudo pg_createcluster 14 main -d /var/lib/postgresql/clusters/14/main --locale=e
 
 See installaction via apt-get above.
 
+pg_createcluster 14 main -d /var/lib/postgresql/14/main --locale=en_US.UTF-8
+
 ### 2. Run test script to stock database on 9.1
 
 ### 3. Related directories
