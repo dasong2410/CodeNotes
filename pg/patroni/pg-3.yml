@@ -1,13 +1,13 @@
-scope: "16-main"
+scope: "14-main"
 namespace: "/pg/"
-name: node-1
+name: pg-3
 
 etcd:
-  host: 192.168.56.92:2379
+  hosts: 192.168.56.111:2379, 192.168.56.112:2379, 192.168.56.113:2379
 
 restapi:
-  listen: 192.168.56.93:8008
-  connect_address: 192.168.56.93:8008
+  listen: 192.168.56.113:8008
+  connect_address: 192.168.56.113:8008
 #  certfile: /etc/ssl/certs/ssl-cert-snakeoil.pem
 #  keyfile: /etc/ssl/private/ssl-cert-snakeoil.key
 #  authentication:
@@ -65,13 +65,13 @@ bootstrap:
       # want to use pg_rewind, you need to uncomment the fourth entry.
       pg_hba:
       - local   all             all                                     peer
-      - host    all             all             127.0.0.1/32            md5
-      - host    all             all             ::1/128                 md5
-      - host    all             all             0.0.0.0/0               md5
+      - host    all             all             127.0.0.1/32            scram-sha-256
+      - host    all             all             ::1/128                 scram-sha-256
+      - host    all             all             0.0.0.0/0               scram-sha-256
       - local   replication     all                                     peer
-      - host    replication     all             127.0.0.1/32            md5
-      - host    replication     all             ::1/128                 md5
-      - host    replication     all             0.0.0.0/0               md5
+      - host    replication     all             127.0.0.1/32            scram-sha-256
+      - host    replication     all             ::1/128                 scram-sha-256
+      - host    replication     all             0.0.0.0/0               scram-sha-256
 #  # Some possibly desired options for 'initdb'. Note: It needs to be a list
 #  # (some options need values, others are # switches)
 #  initdb:
@@ -103,18 +103,18 @@ postgresql:
   # out-of-the-box without having to set net.ipv4.ip_nonlocal_bind or similar.
   # If you prefer to only listen on some interfaces, edit the below:
 #  listen: "@HOSTIP@@LISTEN_VIP@,127.0.0.1:@PORT@"
-  listen: "192.168.56.93:5432"
-  connect_address: 192.168.56.93:5432
+  listen: "192.168.56.113:5432"
+  connect_address: 192.168.56.113:5432
   use_unix_socket: true
   # Default Debian/Ubuntu directory layout
-  data_dir: /var/lib/postgresql/16/main
-  bin_dir: /usr/lib/postgresql/16/bin
-  config_dir: /etc/postgresql/16/main
-  pgpass: /var/lib/postgresql/16-main.pgpass
+  data_dir: /var/lib/postgresql/14/main
+  bin_dir: /usr/lib/postgresql/14/bin
+  config_dir: /etc/postgresql/14/main
+  pgpass: /var/lib/postgresql/14-main.pgpass
   authentication:
     replication:
-      username: "replicator"
-      password: "rep-pass"
+      username: "repl"
+      password: "qK86J2raaK#vyz"
     # A superuser role is required in order for Patroni to manage the local
     # Postgres instance.  If the option `use_unix_socket' is set to `true',
     # then specifying an empty password results in no md5 password for the
@@ -124,7 +124,7 @@ postgresql:
     # below.
     superuser:
       username: "postgres"
-      password: "postgres"
+      password: "m#iA8wGGA8x@CU"
     # A rewind role can be specified in order for Patroni to use on PostgreSQL
     # 11 or later for pg_rewind, i.e. rewinding a former primary after failover
     # without having to re-clone it. Patroni will assign this user the
@@ -138,14 +138,14 @@ postgresql:
     # Emulate default Debian/Ubuntu logging
     logging_collector: 'on'
     log_directory: '/var/log/postgresql'
-    log_filename: 'postgresql-16-main.log'
+    log_filename: 'postgresql-14-main.log'
 
   pg_hba:
     - local   all             all                                     peer
-    - host    all             all             127.0.0.1/32            md5
-    - host    all             all             ::1/128                 md5
-    - host    all             all             0.0.0.0/0               md5
+    - host    all             all             127.0.0.1/32            scram-sha-256
+    - host    all             all             ::1/128                 scram-sha-256
+    - host    all             all             0.0.0.0/0               scram-sha-256
     - local   replication     all                                     peer
-    - host    replication     all             127.0.0.1/32            md5
-    - host    replication     all             ::1/128                 md5
-    - host    replication     all             0.0.0.0/0               md5
+    - host    replication     all             127.0.0.1/32            scram-sha-256
+    - host    replication     all             ::1/128                 scram-sha-256
+    - host    replication     all             0.0.0.0/0               scram-sha-256

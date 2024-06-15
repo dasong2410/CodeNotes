@@ -43,8 +43,13 @@ Kubernetes cluster still can't work normally even after successfully installed.
   sudo mkdir -p /etc/containerd
   containerd config default | sudo tee /etc/containerd/config.toml
 
+  # Must change SystemdCgroup to true, otherwise kubelet will randomly shutdown etcd
+  SystemdCgroup = true
+
   sudo systemctl restart containerd
   ```
+
+
 
 ### 2.2 Install cri-dockerd(if you use docker engin as container runtime)
 
@@ -174,8 +179,13 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 install after init
 
+https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/
+
 ```bash
-kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+#kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+
+
+cilium install
 ```
 
 ### Join to cluster(on all secondary nodes)
@@ -263,4 +273,16 @@ dial tcp 127.0.0.1:6784: connect: connection refused
 or
 
 dial tcp 10.96.0.1:443: i/o timeout
+```
+
+
+### etcd keeps shutting down randomly on new self-managed k8s cluster via kubeadm
+
+https://github.com/etcd-io/etcd/issues/13670
+
+```bash
+/etc/containerd/config.toml
+SystemdCgroup = true
+
+sudo systemctl restart containerd
 ```
