@@ -75,7 +75,7 @@ patronictl -c /etc/patroni/config.yml list
 
 
 
-psql -h 192.168.56.101 -p 5000 -U postgres -d test
+PGPASSWORD=m#iA8wGGA8x@CU psql -h 192.168.56.103 -p 5000 -U postgres -d test1
 
 https://medium.com/@c.ucanefe/patroni-ha-proxy-feed1292d23f
 ```

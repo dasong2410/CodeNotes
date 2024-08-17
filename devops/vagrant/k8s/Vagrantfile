@@ -1,7 +1,3 @@
-# Vagrant.configure("2") do |config|
-#   config.vm.box = "hashicorp/bionic64"
-# end
-
 $script = <<-'SCRIPT'
 # kubelet requires swap off
 sudo swapoff -a
@@ -11,7 +7,6 @@ sudo sed -i 's/\/swap/#&/' /etc/fstab
 sudo systemctl disable ufw
 
 sudo lvextend -l +100%FREE -r /dev/ubuntu-vg/ubuntu-lv
-
 
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
