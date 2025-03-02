@@ -1,93 +1,54 @@
-$pg = <<-'SCRIPT'
-# Create the file repository configuration:
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-
-# Import the repository signing key:
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-
-# Update the package lists:
-sudo apt-get update
-
-# Install the latest version of PostgreSQL.
-# If you want a specific version, use 'postgresql-12' or similar instead of 'postgresql':
-sudo apt-get -y install postgresql-14
-sudo pg_dropcluster 14 main --stop
-
-sudo cp ~/.bashrc /var/lib/postgresql/.bash_profile
-sudo chown postgres:postgres /var/lib/postgresql/.bash_profile
-sudo chmod 664 /var/lib/postgresql/.bash_profile
-
-sudo apt-get -y install etcd
-SCRIPT
-
-$haproxy = <<-'SCRIPT'
-sudo apt-get -y install haproxy
-
-sudo apt install keepalived
-SCRIPT
-
-# This defines the version of vagrant
 Vagrant.configure(2) do |config|
   # Specifying the box we wish to use
   config.vm.box = "bento/ubuntu-22.04"
 
   config.vm.define "pg-1" do |pg|
     pg.vm.hostname = "pg-1"
-    pg.vm.network "private_network", ip: "192.168.56.111"
+    pg.vm.network "public_network", bridge: "wlp0s20f3", ip: "192.168.8.51"
 
     config.vm.provider "virtualbox" do |v|
-      v.linked_clone = true
+      # v.linked_clone = true
       v.check_guest_additions = false
     end
-
-    pg.vm.provision "shell", inline: $pg
   end
 
   config.vm.define "pg-2" do |pg|
     pg.vm.hostname = "pg-2"
-    pg.vm.network "private_network", ip: "192.168.56.112"
+    pg.vm.network "public_network", bridge: "wlp0s20f3", ip: "192.168.8.52"
 
     config.vm.provider "virtualbox" do |v|
-      v.linked_clone = true
+      # v.linked_clone = true
       v.check_guest_additions = false
     end
-
-    pg.vm.provision "shell", inline: $pg
   end
 
   config.vm.define "pg-3" do |pg|
     pg.vm.hostname = "pg-3"
-    pg.vm.network "private_network", ip: "192.168.56.113"
+    pg.vm.network "public_network", bridge: "wlp0s20f3", ip: "192.168.8.53"
 
     config.vm.provider "virtualbox" do |v|
-      v.linked_clone = true
+      # v.linked_clone = true
       v.check_guest_additions = false
     end
-
-    pg.vm.provision "shell", inline: $pg
   end
 
-  config.vm.define "hap-1" do |hap|
-    hap.vm.hostname = "hap-1"
-    hap.vm.network "private_network", ip: "192.168.56.101"
+  # config.vm.define "hap-1" do |hap|
+  #   hap.vm.hostname = "hap-1"
+  #   hap.vm.network "public_network", bridge: "wlp0s20f3", ip: "192.168.8.41"
 
-    config.vm.provider "virtualbox" do |v|
-      v.linked_clone = true
-      v.check_guest_additions = false
-    end
+  #   config.vm.provider "virtualbox" do |v|
+  #     # v.linked_clone = true
+  #     v.check_guest_additions = false
+  #   end
+  # end
 
-    hap.vm.provision "shell", inline: $haproxy
-  end
+  # config.vm.define "hap-2" do |hap|
+  #   hap.vm.hostname = "hap-2"
+  #   hap.vm.network "public_network", bridge: "wlp0s20f3", ip: "192.168.8.42"
 
-  config.vm.define "hap-2" do |hap|
-    hap.vm.hostname = "hap-2"
-    hap.vm.network "private_network", ip: "192.168.56.102"
-
-    config.vm.provider "virtualbox" do |v|
-      v.linked_clone = true
-      v.check_guest_additions = false
-    end
-
-    hap.vm.provision "shell", inline: $haproxy
-  end
+  #   config.vm.provider "virtualbox" do |v|
+  #     # v.linked_clone = true
+  #     v.check_guest_additions = false
+  #   end
+  # end
 end

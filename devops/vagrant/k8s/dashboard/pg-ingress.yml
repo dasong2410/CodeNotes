@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pg-ingress
+  namespace: postgres-operator
+spec:
+  ingressClassName: cilium
+  rules:
+    - host: mypg.com
+      http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: cluster1-ha
+                port:
+                  number: 5432
+            path: /

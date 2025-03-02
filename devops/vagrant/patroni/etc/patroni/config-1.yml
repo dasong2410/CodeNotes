@@ -1,13 +1,13 @@
 scope: "14-main"
 namespace: "/pg/"
-name: pg-2
+name: pg-1
 
 etcd:
-  hosts: 192.168.56.111:2379, 192.168.56.112:2379, 192.168.56.113:2379
+  hosts: 192.168.8.51:2379, 192.168.8.52:2379, 192.168.8.53:2379
 
 restapi:
-  listen: 192.168.56.112:8008
-  connect_address: 192.168.56.112:8008
+  listen: 192.168.8.51:8008
+  connect_address: 192.168.8.51:8008
 #  certfile: /etc/ssl/certs/ssl-cert-snakeoil.pem
 #  keyfile: /etc/ssl/private/ssl-cert-snakeoil.key
 #  authentication:
@@ -103,8 +103,8 @@ postgresql:
   # out-of-the-box without having to set net.ipv4.ip_nonlocal_bind or similar.
   # If you prefer to only listen on some interfaces, edit the below:
 #  listen: "@HOSTIP@@LISTEN_VIP@,127.0.0.1:@PORT@"
-  listen: "192.168.56.112:5432"
-  connect_address: 192.168.56.112:5432
+  listen: "192.168.8.51:5432"
+  connect_address: 192.168.8.51:5432
   use_unix_socket: true
   # Default Debian/Ubuntu directory layout
   data_dir: /var/lib/postgresql/14/main
@@ -149,3 +149,6 @@ postgresql:
     - host    replication     all             127.0.0.1/32            scram-sha-256
     - host    replication     all             ::1/128                 scram-sha-256
     - host    replication     all             0.0.0.0/0               scram-sha-256
+
+tags:
+  failover_priority: 3

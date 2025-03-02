@@ -46,3 +46,29 @@ vagrant@node-1:~$
 
 Vagrant network config : NAT + NAT network + HostOnly
 https://gist.github.com/lktslionel/e11813996644313f997944c7a99be1f0
+
+
+
+```bash
+VBoxManage  list vms
+
+
+echo -n "f577766a-1b16-4b8d-be4c-eee12d171bac" > /data/Dev/vagrant/pg_hot_standby/.vagrant/machines/pg-1/virtualbox/id
+echo -n "d20f983d-5b24-408c-9913-d47731c53623" > /data/Dev/vagrant/pg_hot_standby/.vagrant/machines/pg-2/virtualbox/id
+echo -n "7fc6cfb4-297e-40d3-8ed3-44e080e7d83e" > /data/Dev/vagrant/pg_hot_standby/.vagrant/machines/pg-3/virtualbox/id
+
+echo -n "bc6cb583-f6b6-46a3-98e1-7cb59bb1007d" > /data/Dev/vagrant/pg_hot_standby/.vagrant/machines/hap-1/virtualbox/id
+echo -n "bb58b4ee-c422-49e8-b49e-a7a441c2337c" > /data/Dev/vagrant/pg_hot_standby/.vagrant/machines/hap-2/virtualbox/id
+
+echo -n "c2448633-e3a5-4b6a-98f1-5519e9e156c1" > /data/Dev/vagrant/k8s/.vagrant/machines/node-1/virtualbox/id
+echo -n "dfed969e-b70c-43b1-95e7-23c3ed0821b5" > /data/Dev/vagrant/k8s/.vagrant/machines/node-2/virtualbox/id
+echo -n "b59be5f0-3149-4c97-b44d-8a4da5cfc5f9" > /data/Dev/vagrant/k8s/.vagrant/machines/node-3/virtualbox/id
+
+
+
+vagrant ssh-config
+
+
+create public key from private key, and then copy this key to every vm
+ssh-keygen -y -f vagrant.key.rsa > vagrant.key.rsa.pub
+```

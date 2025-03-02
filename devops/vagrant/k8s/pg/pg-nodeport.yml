@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pg-svc
+  namespace: postgres-operator
+spec:
+  type: NodePort
+  selector:
+    postgres-operator.crunchydata.com/cluster: cluster1-pg-db
+    postgres-operator.crunchydata.com/role: primary
+  ports:
+    - port: 5432
+      targetPort: 5432
+      nodePort: 30432

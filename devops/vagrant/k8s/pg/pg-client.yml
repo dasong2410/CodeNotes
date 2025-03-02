@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pg-client
+  namespace: postgres-operator
 spec:
   replicas: 1
   selector:
@@ -26,7 +27,7 @@ spec:
       volumes:
       - name: ca
         secret:
-          secretName: cluster1-cluster-cert
+          secretName: cluster1-pg-db-cluster-cert
           items:
           - key: ca.crt
             path: ca.crt
