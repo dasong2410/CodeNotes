@@ -1,0 +1,13 @@
+/var/log/postgresql/postgresql-17-test.json {
+       daily
+       rotate 91
+       create 0640 postgres adm
+       delaycompress
+       compress
+       notifempty
+       missingok
+       su root root
+       postrotate
+         touch /var/lib/postgresql/17/test/logrotate
+       endscript
+}
