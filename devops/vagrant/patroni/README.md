@@ -34,6 +34,11 @@ chmod +x bin/cfssljson
 export infra0=etcd
 export infra1=patroni
 export infra2=others
+
+sed -e "s/{1}/${ip1}/g" \
+    -e "s/{2}/${ip2}/g" \
+    -e "s/{3}/${ip3}/g" tls-setup/config/template-req-csr.json > tls-setup/config/req-csr.json
+
 make
 find certs -name "*key*" -exec chmod 644 {} \;
 sudo chmod -R 655 /home/data
