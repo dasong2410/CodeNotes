@@ -5,7 +5,7 @@
 - https://github.com/etcd-io/etcd/tree/main/hack/tls-setup
 - https://www.cyberciti.biz/faq/unix-linux-check-if-port-is-in-use-command/
 
-### Preparation
+### 0. Preparation
 
 ```bash
 # new server check/set timezone(root)
@@ -22,27 +22,6 @@ select-editor
 # There maybe some python errors related to ssl lib changes, upgrade to the latest version
 sudo apt install python3-pip
 pip install --upgrade pyopenssl cryptography
-```
-
-```bash
-# create certificate files
-curl -L -o bin/cfssl https://github.com/cloudflare/cfssl/releases/download/v1.6.5/cfssl_1.6.5_linux_amd64
-curl -L -o bin/cfssljson https://github.com/cloudflare/cfssl/releases/download/v1.6.5/cfssljson_1.6.5_linux_amd64
-chmod +x bin/cfssl
-chmod +x bin/cfssljson
-
-export infra0=etcd
-export infra1=patroni
-export infra2=others
-
-sed -e "s/{1}/${ip1}/g" \
-    -e "s/{2}/${ip2}/g" \
-    -e "s/{3}/${ip3}/g" tls-setup/config/template-req-csr.json > tls-setup/config/req-csr.json
-
-make
-find certs -name "*key*" -exec chmod 644 {} \;
-sudo chmod -R 655 /home/data
-sudo cp -r certs /home/data/
 ```
 
 ```bash
@@ -73,6 +52,27 @@ export ip2=192.168.8.52
 export ip3=192.168.8.53
 export num=3
 export fp=101 # failover priority
+```
+
+```bash
+# create certificate files
+curl -L -o bin/cfssl https://github.com/cloudflare/cfssl/releases/download/v1.6.5/cfssl_1.6.5_linux_amd64
+curl -L -o bin/cfssljson https://github.com/cloudflare/cfssl/releases/download/v1.6.5/cfssljson_1.6.5_linux_amd64
+chmod +x bin/cfssl
+chmod +x bin/cfssljson
+
+export infra0=etcd
+export infra1=patroni
+export infra2=others
+
+sed -e "s/{1}/${ip1}/g" \
+    -e "s/{2}/${ip2}/g" \
+    -e "s/{3}/${ip3}/g" tls-setup/config/template-req-csr.json > tls-setup/config/req-csr.json
+
+make
+find certs -name "*key*" -exec chmod 644 {} \;
+sudo chmod -R 655 /home/data
+sudo cp -r certs /home/data/
 ```
 
 ### 1. Create vms using vagrant
