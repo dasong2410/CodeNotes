@@ -212,6 +212,9 @@ sudo systemctl stop patroni
 sudo systemctl status patroni
 sudo systemctl restart patroni
 
+# install jsonlogger for patroni
+sudo pip install patroni[jsonlogger]
+
 # after patron done the replication
 sudo systemctl enable postgresql@17-test.service
 sudo systemctl start postgresql@17-test.service
@@ -250,6 +253,13 @@ grant execute on function public.lookup(name) to pgbouncer;
 
 ```bash
 sudo apt -y install pgbouncer
+
+# disable pgbouncer write log into syslog
+sudo vi /lib/systemd/system/pgbouncer.service
+ExecStart=/usr/sbin/pgbouncer -q /etc/pgbouncer/pgbouncer.ini
+
+sudo systemctl daemon-reload
+
 sudo systemctl start pgbouncer
 sudo systemctl stop pgbouncer
 sudo systemctl status pgbouncer
@@ -337,4 +347,39 @@ curl https://192.168.8.51:8008/patroni --cacert /home/data/certs/patroni/patroni
 # fix: enable postgresql@17-main.service
 sudo systemctl enable postgresql@17-main.service
 sudo systemctl start postgresql@17-main.service
+```
+
+#### 999.2 requested timeline 19 is not a child of this server's history
+
+```bash
+# fix: remove wal file in the pg_wal directory, patroni will rewind this secodary server
+{"timestamp":"2025-07-04 14:49:03.351 PDT","pid":3601262,"session_id":"68684c4f.36f36e","line_num":2,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"starting PostgreSQL 17.2 (Ubuntu 17.2-
+1.pgdg22.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, 64-bit","backend_type":"postmaster","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.351 PDT","pid":3601262,"session_id":"68684c4f.36f36e","line_num":3,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"listening on IPv4 address \"0.0.0.0\",
+ port 5435","backend_type":"postmaster","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.351 PDT","pid":3601262,"session_id":"68684c4f.36f36e","line_num":4,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"listening on IPv6 address \"::\", port
+ 5435","backend_type":"postmaster","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.351 PDT","pid":3601262,"session_id":"68684c4f.36f36e","line_num":5,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"listening on Unix socket \"/var/run/po
+stgresql/.s.PGSQL.5435\"","backend_type":"postmaster","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.356 PDT","pid":3601267,"session_id":"68684c4f.36f373","line_num":1,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"database system was shut down in recov
+ery at 2025-07-04 13:47:07 PDT","backend_type":"startup","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.358 PDT","pid":3601267,"session_id":"68684c4f.36f373","line_num":2,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"restored log file \"00000013.history\"
+ from archive","backend_type":"startup","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.361 PDT","pid":3601267,"session_id":"68684c4f.36f373","line_num":3,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"restored log file \"00000013.history\"
+ from archive","backend_type":"startup","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.375 PDT","pid":3601267,"session_id":"68684c4f.36f373","line_num":4,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"restored log file \"00000013000000AD00
+00007A\" from archive","backend_type":"startup","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.405 PDT","pid":3601267,"session_id":"68684c4f.36f373","line_num":5,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"entering standby mode","backend_type":
+"startup","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.405 PDT","pid":3601267,"session_id":"68684c4f.36f373","line_num":6,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"FATAL","state_code":"XX000","message":"requested timel
+ine 19 is not a child of this server's history","detail":"Latest checkpoint is at AD/7A000028 on timeline 18, but in the history of the requested timeline, the server forked off from that timeline at AD/79002368.","backend_t
+ype":"startup","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.408 PDT","pid":3601262,"session_id":"68684c4f.36f36e","line_num":6,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"startup process (PID 3601267) exited w
+ith exit code 1","backend_type":"postmaster","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.408 PDT","pid":3601262,"session_id":"68684c4f.36f36e","line_num":7,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"aborting startup due to startup proces
+s failure","backend_type":"postmaster","query_id":0}
+{"timestamp":"2025-07-04 14:49:03.411 PDT","pid":3601262,"session_id":"68684c4f.36f36e","line_num":8,"session_start":"2025-07-04 14:49:03 PDT","txid":0,"error_severity":"LOG","message":"database system is shut down","backend
+_type":"postmaster","query_id":0}
+{"timestamp":"2025-07-04 14:49:16.231 PDT","pid":3601406,"session_id":"68684c5c.36f3fe","line_num":1,"session_start":"2025-07-04 14:49:16 PDT","txid":0,"error_severity":"LOG","message":"ending log output to stderr","hint":"F
+uture log output will go to log destination \"jsonlog\".","backend_type":"postmaster","query_id":0}
 ```

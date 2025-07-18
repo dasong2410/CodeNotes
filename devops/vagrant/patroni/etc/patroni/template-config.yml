@@ -57,13 +57,23 @@ bootstrap:
       # overriding the settings in postgresql.conf.
       parameters:
         wal_level: logical
-        hot_standby: "on"
+        hot_standby: true
         wal_keep_size: 1024
         max_wal_senders: 10
         max_replication_slots: 10
         max_worker_processes: 8
-        wal_log_hints: "on"
-        track_commit_timestamp: "off"
+        wal_log_hints: true
+        track_commit_timestamp: false
+
+        unix_socket_directories: '/var/run/postgresql/'
+        max_connections: 400
+        logging_collector: true
+        log_directory: '/var/log/postgresql'
+        log_destination: 'jsonlog'
+        log_filename: 'postgresql-17-test.log'
+        log_rotation_age: 0
+        log_rotation_size: 0
+
 #      recovery_conf:
 #        restore_command: cp ../wal_archive/%f %p
       # Set pg_hba.conf to the following values after bootstrapping or cloning.
@@ -139,15 +149,16 @@ postgresql:
 #      username: "rewind"
 #      password: "rewind-pass"
 
-  parameters:
-    unix_socket_directories: '/var/run/postgresql/'
-    max_connections: 400
-    logging_collector: on
-    log_directory: '/var/log/postgresql'
-    log_destination: 'jsonlog'
-    log_filename: 'postgresql-17-test.log'
-    log_rotation_age: 0
-    log_rotation_size: 0
+log:
+   type: json
+   dir: /var/log/postgresql
+   format:
+      - asctime: ts
+      - levelname: level
+      - module
+      - message
+   static_fields:
+      app: patroni
 
 tags:
   failover_priority: {fp}

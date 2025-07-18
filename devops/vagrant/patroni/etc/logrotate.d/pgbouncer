@@ -1,0 +1,14 @@
+/var/log/postgresql/pgbouncer.log {
+    rotate 7
+    missingok
+    sharedscripts
+    notifempty
+    nocompress
+    #size 4M
+    daily
+    create 0640 postgres adm
+    su root root
+    postrotate
+        /bin/kill -HUP `cat /var/run/postgresql/pgbouncer.pid 2> /dev/null` 2>/dev/null || true
+    endscript
+}
