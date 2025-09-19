@@ -1,8 +1,9 @@
 ## Setup a new macbook
 
-https://ohmyz.sh/
-https://brew.sh/
+- https://ohmyz.sh/
+- https://brew.sh/
 
+```bash
 brew install --cask visual-studio-code
 brew install --cask iterm2
 brew install --cask github
@@ -23,3 +24,4 @@ defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-sp
 defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-spacer-tile";}'
 
 killall Dock
+```

@@ -1,6 +1,6 @@
 /var/log/postgresql/postgresql-17-test.json {
        daily
-       rotate 91
+       rotate 30
        create 0640 postgres adm
        delaycompress
        compress

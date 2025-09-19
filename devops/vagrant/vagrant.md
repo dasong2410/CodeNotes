@@ -72,3 +72,26 @@ vagrant ssh-config
 create public key from private key, and then copy this key to every vm
 ssh-keygen -y -f vagrant.key.rsa > vagrant.key.rsa.pub
 ```
+
+### 999. Errors
+
+- https://forums.virtualbox.org/viewtopic.php?t=112955
+
+```bash
+# error
+==> pg-1: Booting VM...
+There was an error while executing `VBoxManage`, a CLI used by Vagrant
+for controlling VirtualBox. The command and stderr is shown below.
+
+Command: ["startvm", "d1651253-3de8-4841-8977-6933aa6c305d", "--type", "headless"]
+
+Stderr: VBoxManage: error: VirtualBox can't operate in VMX root mode. Please disable the KVM kernel extension, recompile your kernel and reboot (VERR_VMX_IN_VMX_ROOT_MODE)
+VBoxManage: error: Details: code NS_ERROR_FAILURE (0x80004005), component ConsoleWrap, interface IConsole
+```
+
+```bash
+# fix
+dasong@dasong-server:~$ cat /etc/modprobe.d/blacklist-kvm-intel.conf
+blacklist kvm_intel
+dasong@dasong-server:~$
+```

@@ -193,6 +193,9 @@ create user repl with replication encrypted password 'qK86J2raaK#vyz';
 
 ```bash
 sudo apt -y install patroni
+# install jsonlogger for patroni
+sudo apt install -y python3-pip
+sudo pip install patroni[jsonlogger]
 
 # create config file
 sed -e "s/{num}/${num}/g" \
@@ -212,8 +215,7 @@ sudo systemctl stop patroni
 sudo systemctl status patroni
 sudo systemctl restart patroni
 
-# install jsonlogger for patroni
-sudo pip install patroni[jsonlogger]
+
 
 # after patron done the replication
 sudo systemctl enable postgresql@17-test.service
@@ -323,12 +325,19 @@ psql -p 5000 -U marcus -d postgres -h 127.0.0.1
 
 ```bash
 etcdctl member list -w table
-etcdctl endpoint status --cluster
-etcdctl endpoint health --cluster
+etcdctl endpoint status --cluster -w table
+etcdctl endpoint health --cluster -w table
+
+etcdctl get "" --prefix
+etcdctl get "" --prefix --keys-only
 
 patronictl list
 patronictl list 17-main
 patronictl restart 17-main pg-1
+
+sudo apt update
+sudo apt install -y python3-pip
+sudo pip3 install patroni[jsonlogger]
 
 curl https://192.168.8.51:2379/metrics --cacert --cacert /home/data/certs/patroni/patroni.pem | grep wal
 curl http://192.168.8.52:2379/metrics | grep wal
@@ -336,7 +345,6 @@ curl http://192.168.8.53:2379/metrics | grep wal
 
 curl -s https://192.168.8.51:8008/patroni --cacert /home/data/certs/patroni/patroni.pem | jq
 curl https://192.168.8.51:8008/patroni --cacert /home/data/certs/patroni/patroni.pem | jq
-
 ```
 
 ### 999. Errors

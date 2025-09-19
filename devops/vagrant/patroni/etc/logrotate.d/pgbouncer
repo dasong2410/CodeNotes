@@ -1,5 +1,5 @@
 /var/log/postgresql/pgbouncer.log {
-    rotate 7
+    rotate 30
     missingok
     sharedscripts
     notifempty
