@@ -1,3 +1,4 @@
+# https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 ##################################################################################################################
 # Begin: system configuration
 ##################################################################################################################
@@ -73,7 +74,7 @@ sudo apt-get install -y containerd.io
 sudo mkdir -p /etc/containerd
 containerd config default | sudo tee /etc/containerd/config.toml
 sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
-sudo sed -i 's#registry.k8s.io/pause:3.8#registry.k8s.io/pause:3.9#g' /etc/containerd/config.toml
+sudo sed -i -E 's#sandbox_image = ".+"#sandbox_image = "registry.k8s.io/pause:3.10"#g' /etc/containerd/config.toml
 sudo systemctl restart containerd
 
 #wget https://github.com/containernetworking/plugins/releases/download/v1.5.0/cni-plugins-linux-amd64-v1.5.0.tgz
@@ -92,10 +93,10 @@ sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 
 # If the directory `/etc/apt/keyrings` does not exist, it should be created before the curl command, read the note below.
 # sudo mkdir -p -m 755 /etc/apt/keyrings
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 # This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl

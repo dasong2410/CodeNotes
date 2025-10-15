@@ -14,13 +14,14 @@ sudo timedatectl set-timezone America/Vancouver
 
 # install language pack
 locale -a
-sudo apt-get -y install language-pack-en
+sudo apt update
+sudo apt -y install language-pack-en
 
 # change editor for crontab
 select-editor
 
 # There maybe some python errors related to ssl lib changes, upgrade to the latest version
-sudo apt install python3-pip
+sudo apt -y install python3-pip
 pip install --upgrade pyopenssl cryptography
 ```
 
@@ -229,11 +230,7 @@ sudo systemctl start postgresql@17-test.service
 ```sql
 -- create an user for pgbouncer under database postgres
 create user pgbouncer;
--- set a password for the user
--- Viral2-Campsite-Gleaming-Scrabble-Rockiness
-\password pgbouncer
 
--- drop function public.lookup(name);
 create or replace function public.lookup
 (
   inout p_user   name,
@@ -243,9 +240,10 @@ create or replace function public.lookup
   security definer set search_path = pg_catalog
 as
 $$
-select usename, passwd
-from pg_shadow
-where usename = p_user
+select rolname user_name, case when rolvaliduntil < pg_catalog.now() then null else rolpassword end user_pwd
+from pg_authid
+where rolname = p_user
+  and rolcanlogin;
 $$;
 
 -- make sure only 'pgbouncer' can use the function
@@ -330,6 +328,13 @@ etcdctl endpoint health --cluster -w table
 
 etcdctl get "" --prefix
 etcdctl get "" --prefix --keys-only
+
+# etcd cluster add new member
+# on existing server
+ETCDCTL_API=3 etcdctl --endpoints=http://192.168.56.15:2379 member add etcd-3 --peer-urls=http://192.168.56.17:2380
+# on new server
+# modify the config according the output of existing server
+# start etcd
 
 patronictl list
 patronictl list 17-main

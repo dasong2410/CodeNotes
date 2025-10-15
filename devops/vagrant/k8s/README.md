@@ -19,6 +19,8 @@ vagrant destroy -f
 ```
 
 ### Create lvs
+
+```bash
 sudo pvcreate /dev/sda3
 sudo pvdisplay
 
@@ -37,6 +39,7 @@ sudo mkfs.ext4 /dev/vg_iscsi/iscsi_disk02
 sudo mkfs.ext4 /dev/vg_iscsi/iscsi_disk03
 sudo mkfs.ext4 /dev/vg_iscsi/iscsi_disk04
 sudo mkfs.ext4 /dev/vg_iscsi/iscsi_disk05
+```
 
 ### Create shared disks
 

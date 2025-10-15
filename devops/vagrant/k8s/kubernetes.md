@@ -109,12 +109,12 @@ root@m-1:~# kubeadm init \
 --apiserver-advertise-address=192.168.8.11 \
 --apiserver-cert-extra-sans=192.168.8.11 \
 --pod-network-cidr=172.16.0.0/16
-I0110 00:46:18.403812    9909 version.go:256] remote version is much newer: v1.32.0; falling back to: stable-1.29
-[init] Using Kubernetes version: v1.29.12
+I1008 14:57:19.284179    5563 version.go:261] remote version is much newer: v1.34.1; falling back to: stable-1.33
+[init] Using Kubernetes version: v1.33.5
 [preflight] Running pre-flight checks
 [preflight] Pulling images required for setting up a Kubernetes cluster
 [preflight] This might take a minute or two, depending on the speed of your internet connection
-[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+[preflight] You can also perform this action beforehand using 'kubeadm config images pull'
 [certs] Using certificateDir folder "/etc/kubernetes/pki"
 [certs] Generating "ca" certificate and key
 [certs] Generating "apiserver" certificate and key
@@ -144,14 +144,22 @@ I0110 00:46:18.403812    9909 version.go:256] remote version is much newer: v1.3
 [kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
 [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
 [kubelet-start] Starting the kubelet
-[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
-[apiclient] All control plane components are healthy after 6.507176 seconds
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests"
+[kubelet-check] Waiting for a healthy kubelet at http://127.0.0.1:10248/healthz. This can take up to 4m0s
+[kubelet-check] The kubelet is healthy after 1.001181761s
+[control-plane-check] Waiting for healthy control plane components. This can take up to 4m0s
+[control-plane-check] Checking kube-apiserver at https://192.168.8.11:6443/livez
+[control-plane-check] Checking kube-controller-manager at https://127.0.0.1:10257/healthz
+[control-plane-check] Checking kube-scheduler at https://127.0.0.1:10259/livez
+[control-plane-check] kube-controller-manager is healthy after 2.50442309s
+[control-plane-check] kube-scheduler is healthy after 4.793253924s
+[control-plane-check] kube-apiserver is healthy after 6.501844512s
 [upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
 [kubelet] Creating a ConfigMap "kubelet-config" in namespace kube-system with the configuration for the kubelets in the cluster
 [upload-certs] Skipping phase. Please see --upload-certs
 [mark-control-plane] Marking the node m-1 as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
 [mark-control-plane] Marking the node m-1 as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
-[bootstrap-token] Using token: s7auz9.yfcduie24hijxvmo
+[bootstrap-token] Using token: w58bue.owjlkr9jztgvjt8g
 [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
 [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to get nodes
 [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
@@ -180,8 +188,8 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 192.168.8.11:6443 --token s7auz9.yfcduie24hijxvmo \
-	--discovery-token-ca-cert-hash sha256:1392a807008f43c3e64144638ec31afe7bbd59d1d63bd0f7bf6512c200556ca0
+kubeadm join 192.168.8.11:6443 --token w58bue.owjlkr9jztgvjt8g \
+	--discovery-token-ca-cert-hash sha256:0e806edab02db22bba2528841d0d8c550925bd701780313a6e61da2833076ef3
 root@m-1:~#
 ```
 
