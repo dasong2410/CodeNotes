@@ -24,32 +24,11 @@ lvcreate -n k8s_disk04 -L 5G ubuntu-vg
 - https://medium.com/@amirhosseineidy/how-to-join-master-node-or-control-plane-to-kubernetes-cluster-e16be68459bf
 
 ```bash
-kubectl apply -n postgres-operator -f pg-client.yml
-
-kubectl exec -n postgres-operator deployment/pg-client -it -- bash -il
-
-
-kubectl exec -n postgres-operator pod/cluster1-instance1-8wvk-0 -it -- bash -il
-```
-
-```bash
-# get secret
 PGBOUNCER_URI=$(kubectl get secret cluster1-pguser-cluster1 --namespace postgres-operator -o jsonpath='{.data.pgbouncer-uri}' | base64 --decode)
+kubectl run -i --rm --tty pg-client --image=perconalab/percona-distribution-postgresql:17 --restart=Never -- psql $PGBOUNCER_URI
 
-# error
-# psql: error: connection to server at "cluster1-pgbouncer.postgres-operator.svc" (10.100.46.231), port 5432 failed: FATAL:  query_wait_timeout
-PGSSLMODE=verify-ca PGSSLROOTCERT=/tmp/tls/ca.crt psql postgresql://cluster1:%3AmaCAGEA%2F%2A._L%7Cj-Vm%2A%5BVjaH@cluster1-pgbouncer.postgres-operator.svc:5432/cluster1
-
-# working properly
-psql postgresql://cluster1:%3AmaCAGEA%2F%2A._L%7Cj-Vm%2A%5BVjaH@cluster1-ha.postgres-operator.svc:5432/cluster1
-
-
-psql postgresql://cluster1:%3AmaCAGEA%2F%2A._L%7Cj-Vm%2A%5BVjaH@cluster1-primary.postgres-operator.svc:5432/cluster1
-psql postgresql://cluster1:%3AmaCAGEA%2F%2A._L%7Cj-Vm%2A%5BVjaH@cluster1-replicas.postgres-operator.svc:5432/cluster1
-
-cluster1-primary
+kubectl exec -it -n postgres-operator cluster1-instance1-dqlw-0 -- /bin/bash
 ```
-
 
 ### Delete Percona Operator for PostgreSQL
 

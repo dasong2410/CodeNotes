@@ -231,24 +231,28 @@ sudo systemctl start postgresql@17-test.service
 -- create an user for pgbouncer under database postgres
 create user pgbouncer;
 
-create or replace function public.lookup
+create or replace function public.user_lookup
 (
-  inout p_user   name,
-  out p_password text
+  in i_username text,
+  out uname     text,
+  out phash     text
 ) returns record
-  language sql
-  security definer set search_path = pg_catalog
+  language plpgsql
+  security definer set search_path = pg_catalog, pg_temp
 as
 $$
-select rolname user_name, case when rolvaliduntil < pg_catalog.now() then null else rolpassword end user_pwd
-from pg_authid
-where rolname = p_user
-  and rolcanlogin;
+begin
+  select rolname, case when rolvaliduntil < now() then null else rolpassword end
+  from pg_authid
+  where rolname = i_username
+    and rolcanlogin
+  into uname, phash;
+  return;
+end;
 $$;
 
--- make sure only 'pgbouncer' can use the function
-revoke execute on function public.lookup(name) from public;
-grant execute on function public.lookup(name) to pgbouncer;
+revoke all on function public.user_lookup(text) from public, pgbouncer;
+grant execute on function public.user_lookup(text) to pgbouncer;
 ```
 
 ```bash
