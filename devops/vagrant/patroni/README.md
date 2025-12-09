@@ -91,16 +91,20 @@ sudo ufw enable
 # sudo ufw allow from x.x.x.0/24
 # sudo ufw delete allow from x.x.x.0/24
 
+# pg, pgbouncer
 sudo ufw allow 5432
 sudo ufw allow 6432
 
+# haproxy
 sudo ufw allow 5000
 sudo ufw allow 5001
 sudo ufw allow 7000
 
+# etcd
 sudo ufw allow 2379
 sudo ufw allow 2380
 
+# patroni
 sudo ufw allow 8008
 ```
 
