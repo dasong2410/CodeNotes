@@ -1,13 +1,13 @@
 /var/log/postgresql/postgresql-17-test.json {
-       daily
-       rotate 30
-       create 0640 postgres adm
-       delaycompress
-       compress
-       notifempty
-       missingok
-       su root root
-       postrotate
-         touch /var/lib/postgresql/17/test/logrotate
-       endscript
+    daily
+    rotate 7
+    create 0640 postgres adm
+    delaycompress
+    compress
+    notifempty
+    missingok
+    su root root
+    postrotate
+        pg_ctlcluster 17 test logrotate
+    endscript
 }

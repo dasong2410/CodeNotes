@@ -42,6 +42,7 @@ bootstrap:
     retry_timeout: 10
     maximum_lag_on_failover: 1048576
     check_timeline: true
+    failsafe_mode: true
 #    master_start_timeout: 300
 #    synchronous_mode: false
 #    standby_cluster:
@@ -57,6 +58,8 @@ bootstrap:
       # overriding the settings in postgresql.conf.
       parameters:
         wal_level: logical
+        archive_command: 'test ! -f "/var/lib/postgresql/archive/17/test/%f.zst" && zstd -q "%p" -o "/var/lib/postgresql/archive/17/test/%f.zst"'
+        archive_mode: false
         hot_standby: true
         wal_keep_size: 1024
         max_wal_senders: 10
@@ -69,7 +72,6 @@ bootstrap:
         max_connections: 400
         logging_collector: true
         log_directory: '/var/log/postgresql'
-        log_destination: 'jsonlog'
         log_filename: 'postgresql-17-test.log'
         log_rotation_age: 0
         log_rotation_size: 0
@@ -81,6 +83,7 @@ bootstrap:
       # want to use pg_rewind, you need to uncomment the fourth entry.
       pg_hba:
       - local   all             all                                     peer
+      - host    postgres        pgbouncer       127.0.0.1/32            trust
       - host    all             all             127.0.0.1/32            scram-sha-256
       - host    all             all             ::1/128                 scram-sha-256
       - host    all             all             0.0.0.0/0               scram-sha-256
@@ -149,16 +152,19 @@ postgresql:
 #      username: "rewind"
 #      password: "rewind-pass"
 
+# log:
+#    type: json
+#    dir: /var/log/postgresql
+#    format:
+#       - asctime: ts
+#       - levelname: level
+#       - module
+#       - message
+#    static_fields:
+#       app: patroni
+
 log:
-   type: json
    dir: /var/log/postgresql
-   format:
-      - asctime: ts
-      - levelname: level
-      - module
-      - message
-   static_fields:
-      app: patroni
 
 tags:
   failover_priority: {fp}

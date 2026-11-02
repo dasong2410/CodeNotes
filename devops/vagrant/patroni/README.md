@@ -27,7 +27,7 @@ pip install --upgrade pyopenssl cryptography
 
 ```bash
 # declare env variables on every host
-# host1
+# node1
 export vip=192.168.8.50
 export ip0=192.168.8.51 # current node ip
 export ip1=192.168.8.51
@@ -36,7 +36,7 @@ export ip3=192.168.8.53
 export num=1
 export fp=103 # failover priority
 
-# host2
+# node2
 export vip=192.168.8.50
 export ip0=192.168.8.52 # current node ip
 export ip1=192.168.8.51
@@ -45,7 +45,7 @@ export ip3=192.168.8.53
 export num=2
 export fp=102 # failover priority
 
-# host3
+# node3
 export vip=192.168.8.50
 export ip0=192.168.8.53 # current node ip
 export ip1=192.168.8.51
@@ -70,6 +70,8 @@ sed -e "s/{1}/${ip1}/g" \
     -e "s/{2}/${ip2}/g" \
     -e "s/{3}/${ip3}/g" tls-setup/config/template-req-csr.json > tls-setup/config/req-csr.json
 
+sed -e 's/{ip}/"192.168.8.51","192.168.8.52","192.168.8.53"/g' tls-setup/config/template-req-csr.json > tls-setup/config/req-csr.json
+
 make
 find certs -name "*key*" -exec chmod 644 {} \;
 sudo chmod -R 655 /home/data
@@ -84,35 +86,37 @@ sudo cp -r certs /home/data/
 
 ```bash
 # may need to restart services if don't open those ports in advance
+# pg: 5432
+# pgbouncer: 6432
+# haproxy: 5000, 5001, 7000
+# etcd: 2379, 2380
+# patroni: 8008
+
 sudo ufw allow ssh
 sudo ufw enable
 
-# sudo ufw allow from x.x.x.x to any port 5432
-# sudo ufw allow from x.x.x.0/24
-# sudo ufw delete allow from x.x.x.0/24
+sudo ufw allow from 192.168.8.51
+sudo ufw allow from 192.168.8.52
+sudo ufw allow from 192.168.8.53
 
-# pg, pgbouncer
-sudo ufw allow 5432
-sudo ufw allow 6432
+sudo ufw allow from 192.168.9.0/24 to any port 5432
+sudo ufw allow from 192.168.9.0/24 to any port 6432
+sudo ufw allow from 192.168.9.0/24 to any port 5000
+sudo ufw allow from 192.168.9.0/24 to any port 5001
+sudo ufw allow from 192.168.9.0/24 to any port 7000
+sudo ufw allow from 192.168.9.0/24 to any port 2379
+sudo ufw allow from 192.168.9.0/24 to any port 2380
+sudo ufw allow from 192.168.9.0/24 to any port 8008
 
-# haproxy
-sudo ufw allow 5000
-sudo ufw allow 5001
-sudo ufw allow 7000
-
-# etcd
-sudo ufw allow 2379
-sudo ufw allow 2380
-
-# patroni
-sudo ufw allow 8008
+sudo ufw status
+sudo ufw reload
 ```
 
 - https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-20-04
 ```bash
-sudo apt update
-sudo apt -y install ntp
-sudo ntpq -p
+# sudo apt update
+# sudo apt -y install ntp
+# sudo ntpq -p
 sudo timedatectl
 sudo timedatectl set-timezone America/Vancouver
 ```
@@ -201,6 +205,8 @@ sudo apt -y install patroni
 # install jsonlogger for patroni
 sudo apt install -y python3-pip
 sudo pip install patroni[jsonlogger]
+
+sudo apt -y install --only-upgrade patroni
 
 # create config file
 sed -e "s/{num}/${num}/g" \
@@ -336,6 +342,9 @@ etcdctl endpoint health --cluster -w table
 
 etcdctl get "" --prefix
 etcdctl get "" --prefix --keys-only
+
+grep 'etcd' /var/log/syslog | grep 'leader'
+grep 'etcd' /var/log/syslog | grep 'elected leader'
 
 # etcd cluster add new member
 # on existing server
